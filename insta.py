@@ -20,13 +20,13 @@ appium_url = 'http://localhost:4723/wd/hub'
 driver = webdriver.Remote(appium_url, desired_caps)
 sleep(15)
 el8 = driver.find_element(by=AppiumBy.XPATH, value="/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText")
-el8.send_keys("adipurus_h")
-#user=driver.find_element(MobileBy.XPATH,"//*[@text='Username']").send_keys('adipurus_h')
-#password=driver.find_element(MobileBy.XPATH,"//*[@text='Password']").send_keys('Dsb@2003')
+el8.send_keys("your username")
+#user=driver.find_element(MobileBy.XPATH,"//*[@text='Username']").send_keys('your username')
+#password=driver.find_element(MobileBy.XPATH,"//*[@text='Password']").send_keys('Password')
 #login=driver.find_element(MobileBy.XPATH,"//*[@text='Log in']").click()
 # Enter password
 el9 = driver.find_element(by=AppiumBy.XPATH, value="/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText")
-el9.send_keys("Dsb@2003")
+el9.send_keys("Password")
 
 # Perform login action
 el13 = driver.find_element(by=AppiumBy.XPATH, value="//android.view.View[@content-desc=\"Log in\"]")
