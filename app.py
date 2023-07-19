@@ -1,21 +1,26 @@
 from appium import webdriver
+import logging
+import yaml
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, WebDriverException
 
-desired_caps = {
-    'platformName': 'Android',
-    'deviceName': 'emulator-5554',
-    'app': 'C:\\Users\\dsb67\\Downloads\\instagram-291-1-0-34-111.apk',
-    'noReset': True,
-    'autoGrantPermissions': True,
-    'appPackage': 'com.instagram.android',
-    'appActivity': 'com.instagram.mainactivity.MainActivity'
-   
-}
-appium_url = 'http://localhost:4723/wd/hub'
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Replace '4723' with the appropriate Appium server port
+with open('config.yml', 'r') as config_file:
+    config = yaml.safe_load(config_file)
 
-driver = webdriver.Remote(appium_url, desired_caps)
-  
+logging.info("Creating Appium driver")
+logging.info("Appium desired capabilities: %s", config['install_capabilities'])
+logging.info("Appium server URL: %s", config['url']['appium'])
 
+try:
+  driver = webdriver.Remote(config['url']['appium'], config['install_capabilities'])
+  logging.info("Appium driver created: %s", driver)
 
-driver.quit()
+except WebDriverException as e:
+    print(f'An error occurred: {str(e)}')
+
+finally:
+    # Quit the driver and close the session
+    if 'driver' in locals():
+        driver.quit()
+        logging.info("Appium driver closed")
