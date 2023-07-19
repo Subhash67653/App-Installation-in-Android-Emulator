@@ -1,41 +1,67 @@
+import yaml
 from appium import webdriver
 from time import sleep
-from selenium.webdriver.common.by import By
-from appium.webdriver.common.mobileby import MobileBy
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from appium.options.android import UiAutomator2Options
-from appium.options.ios import XCUITestOptions
 from appium.webdriver.appium_service import AppiumService
 from appium.webdriver.common.appiumby import AppiumBy
+import logging
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, WebDriverException
 
-desired_caps = {
-    'platformName': 'Android',
-    'deviceName': 'emulator-5554',
-    'appPackage': 'com.instagram.android',
-    'appActivity': 'com.instagram.mainactivity.MainActivity',
-}
 
-appium_url = 'http://localhost:4723/wd/hub'
-driver = webdriver.Remote(appium_url, desired_caps)
-sleep(15)
-el8 = driver.find_element(by=AppiumBy.XPATH, value="/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText")
-el8.send_keys("your username")
-#user=driver.find_element(MobileBy.XPATH,"//*[@text='Username']").send_keys('your username')
-#password=driver.find_element(MobileBy.XPATH,"//*[@text='Password']").send_keys('Password')
-#login=driver.find_element(MobileBy.XPATH,"//*[@text='Log in']").click()
-# Enter password
-el9 = driver.find_element(by=AppiumBy.XPATH, value="/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText")
-el9.send_keys("Password")
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+with open('config.yml', 'r') as config_file:
+    config = yaml.safe_load(config_file)
+
+logging.info("Creating Appium driver")
+logging.info("Appium desired capabilities: %s", config['login_capabilities'])
+logging.info("Appium server URL: %s", config['url']['appium'])
+
+try:
+    driver = webdriver.Remote(config['url']['appium'], config['login_capabilities'])
+    logging.info("Appium driver created: %s", driver)
+    sleep(15)
+
+    el8 = driver.find_element(by=AppiumBy.XPATH, value= "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText" )
+    el8.send_keys("yourusername")
+
+    el9 = driver.find_element(by=AppiumBy.XPATH, value= "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText" )
+    el9.send_keys("password")
 
 # Perform login action
-el13 = driver.find_element(by=AppiumBy.XPATH, value="//android.view.View[@content-desc=\"Log in\"]")
-el13.click()
+    el13 = driver.find_element(by=AppiumBy.XPATH, value= "//android.view.View[@content-desc=\"Log in\"]")
+    el13.click()
 
 # Wait for the login process to complete
-sleep(5)
-
-# Perform any additional actions after login if needed
+    sleep(5)
 
 # Quit the driver and close the session
-driver.quit()
+except WebDriverException as e:
+    if "appPackage" in str(e):
+        print("App is not installed")
+    else:
+        print("WebDriverException occurred:", str(e))
+
+except NoSuchElementException as e:
+    print("Element not found:", str(e))
+    
+except TimeoutException as e:
+    print("Timeout occurred:", str(e))
+    
+
+    
+except Exception as e:
+    print("An error occurred:", str(e))
+
+finally:
+    # Quit the driver and close the session
+    if 'driver' in locals():
+        driver.quit()
+        logging.info("Appium driver closed")
+
+
+
+
+
+
+
+
